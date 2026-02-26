@@ -83,12 +83,17 @@ if __name__ == "__main__":
 ## Checklist pre-generazione
 - [ ] Tutti i box hanno dimensioni > 0
 - [ ] Boolean cutter più grande dello spessore muro (T*4)
-- [ ] Ordine: subdiv → boolean apply → materiale
+- [ ] Boolean solver = 'EXACT' (NON 'FAST')
+- [ ] Nessun Subdivision Surface su box architettonici
 - [ ] Camera clip_end > distanza camera-edificio
 - [ ] Film transparent = True per compositing
 - [ ] Output path esistente
 - [ ] Nessun `scene.node_tree` (Blender 5.0)
 - [ ] Nessun `NISHITA` sky type
+- [ ] Nessun `mat.cycles.displacement_method` → usare `mat.displacement_method`
+- [ ] Nessun `scene.cycles.feature_set` → rimosso in 5.0
+- [ ] Color management: `AgX` + `AgX - Base Contrast` (NON Medium Contrast)
+- [ ] Texture PBR: `Generated` coords + `BOX` projection su ogni Image Texture
 
 ## Gestione errori
 ```python
@@ -143,8 +148,86 @@ def composite_on_photo(model_path, photo_path, output_path):
 - [cosa è cambiato e perché]
 ```
 
+## Pattern PBR Texture (da training muro in pietra)
+
+### Caricamento texture Poly Haven
+```python
+TEX_DIR = Path(__file__).parent / "materials" / "textures"
+
+# Ogni Image Texture deve usare BOX projection + Generated coords
+tex = ns.new("ShaderNodeTexImage")
+tex.image = bpy.data.images.load(str(TEX_DIR / "rock_wall_08_diff_2k.jpg"))
+tex.image.colorspace_settings.name = 'sRGB'   # 'Non-Color' per rough/normal/disp
+tex.projection = 'BOX'
+tex.projection_blend = 0.3
+```
+
+### Bump chain a 2 livelli (profondità realistica)
+```python
+# Livello 1: displacement texture → Bump (profondità giunti e sassi)
+bump = ns.new("ShaderNodeBump")
+bump.inputs["Strength"].default_value = 0.8
+bump.inputs["Distance"].default_value = 0.04  # 4cm
+lk.new(tex_disp.outputs["Color"], bump.inputs["Height"])
+lk.new(normal_map.outputs["Normal"], bump.inputs["Normal"])
+
+# Livello 2: noise micro → Bump (rugosità singolo sasso)
+bump2 = ns.new("ShaderNodeBump")
+bump2.inputs["Strength"].default_value = 0.05
+bump2.inputs["Distance"].default_value = 0.002
+lk.new(noise_micro.outputs["Fac"], bump2.inputs["Height"])
+lk.new(bump.outputs["Normal"], bump2.inputs["Normal"])
+
+lk.new(bump2.outputs["Normal"], bsdf.inputs["Normal"])
+```
+
+### Setup render Cycles (Blender 5.0 safe)
+```python
+scene.render.engine = 'CYCLES'
+scene.cycles.samples = 512
+scene.cycles.use_denoising = True
+scene.cycles.denoiser = 'OPENIMAGEDENOISE'
+scene.view_settings.view_transform = 'AgX'
+scene.view_settings.look = 'AgX - Base Contrast'
+
+# GPU con fallback CPU
+try:
+    prefs = bpy.context.preferences.addons['cycles'].preferences
+    prefs.compute_device_type = 'CUDA'
+    prefs.get_devices()
+    for d in prefs.devices: d.use = True
+    scene.cycles.device = 'GPU'
+except:
+    scene.cycles.device = 'CPU'
+```
+
+### Texture disponibili (già scaricate)
+- `chain/materials/textures/rock_wall_08_diff_2k.jpg` — diffuse/color (sRGB)
+- `chain/materials/textures/rock_wall_08_nor_gl_2k.jpg` — normal map OpenGL (Non-Color)
+- `chain/materials/textures/rock_wall_08_rough_2k.jpg` — roughness (Non-Color)
+- `chain/materials/textures/rock_wall_08_disp_2k.png` — displacement (Non-Color)
+- Parametri completi: `chain/materials/stone_wall.md`
+
+## Lezioni dal Training (muro in pietra — 5 iterazioni)
+
+| Iterazione | Problema | Soluzione |
+|------------|----------|-----------|
+| 1 | Subdiv livello 3 su box → sfera | NON usare Subdivision Surface su box |
+| 1 | `mat.cycles.displacement_method` → errore | Usare `mat.displacement_method` |
+| 1 | `feature_set = 'EXPERIMENTAL'` → errore | Rimosso in 5.0, usare BUMP only |
+| 1 | `AgX - Medium Contrast` → errore | Usare `AgX - Base Contrast` |
+| 2 | Voronoi procedurale → piatto | Texture PBR molto superiori |
+| 3 | TexCoord Object su box → stretching | Usare `Generated` coords |
+| 4 | broken_wall texture → pietre piatte | Usare `rock_wall_08` per sassi fiume |
+| 5 | Risultato fotorealistico | Parametri finali in stone_wall.md |
+
 ## Anti-Pattern
 - NON generare script parziali — deve essere COMPLETO e autonomo
 - NON usare path relativi — usa Path(__file__) o path assoluti
 - NON dimenticare `OUTPUT_DIR.mkdir(parents=True, exist_ok=True)`
 - NON lasciare print() senza informazione utile
+- NON usare `mat.cycles.displacement_method` → `mat.displacement_method`
+- NON usare `scene.cycles.feature_set` → rimosso in Blender 5.0
+- NON usare Subdivision Surface su box architettonici
+- NON usare TexCoord `Object` su box → usare `Generated` + `BOX` projection
+- NON usare materiale procedurale puro per sassi — usare texture PBR da Poly Haven

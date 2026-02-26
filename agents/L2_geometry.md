@@ -84,7 +84,21 @@ Traduci le decisioni architettoniche di L1 in coordinate 3D precise. Ogni elemen
 - Centro muro OVEST: `(T/2, D/2, H/2)`
 - Centro muro EST: `(W-T/2, D/2, H/2)`
 
+## Lezioni dal Training (muro in pietra)
+
+### Geometria muri
+- I muri sono BOX semplici — NON aggiungere Subdivision Surface (arrotonda il box in una sfera)
+- Spessore muro tipico Ca' del Papa: 0.45m
+- La profondità/rilievo dei sassi viene interamente dal materiale (bump chain), NON dalla geometria
+- Per un muro 3m x 2m x 0.45m: `scale = (3.0, 0.45, 2.0)`, `location.z = altezza/2`
+
+### Texture mapping
+- Specificare che i muri usano coordinate `Generated` (NON `Object`) per evitare stretching
+- La proiezione `BOX` (blend 0.3) è obbligatoria per box che hanno facce visibili su più assi
+- Scala mapping: (1.5, 1.5, 1.5) per adattare texture quadrate a muri rettangolari
+
 ## Anti-Pattern
 - NON usare coordinate relative — tutto in assoluto dal sistema di riferimento
 - NON dimenticare lo spessore del tetto
 - NON mettere aperture che escono dai muri
+- NON usare Subdivision Surface su box architettonici — li arrotonda in sfere

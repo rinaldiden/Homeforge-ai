@@ -77,7 +77,22 @@ Per ciascuna:
 [Eventuali conflitti tra richiesta e vincoli]
 ```
 
+## Lezioni dal Training (muro in pietra)
+
+### Materiali muratura esterna
+- I muri in sasso di fiume alpino richiedono texture PBR reali, NON materiali procedurali
+- Texture consigliata: `rock_wall_08` da Poly Haven (CC0) — sassi irregolari con profondità
+- Alternativa: `broken_wall` (pietre piatte/slate, meno adatto per sassi di fiume)
+- Le texture procedurali (Voronoi DISTANCE_TO_EDGE) producono risultati piatti e non fotorealistici
+- Per ottenere fotorealismo servono: texture PBR + bump chain a 2 livelli + normal map forte
+
+### Decisioni materiche da specificare per L2/L3
+- Per ogni muro: indicare se è sasso di fiume, pietra locale, intonaco
+- Per il sasso: specificare dimensione sassi (8-30cm), colore (grigi misti), malta (grigio chiara 1-2cm)
+- Fare SEMPRE riferimento a `chain/materials/stone_wall.md` per parametri provati
+
 ## Anti-Pattern
 - NON inventare dimensioni: usa SOLO quelle dalla knowledge base
 - NON ignorare vincoli della commissione paesaggistica
 - NON cambiare decisioni precedenti senza motivazione esplicita
+- NON specificare "materiale procedurale" per sassi — specificare sempre texture PBR
