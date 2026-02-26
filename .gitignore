@@ -1,0 +1,26 @@
+# Render output (large binary files)
+output/*.png
+deliverables/08-render-fotoinserimenti/*.png
+
+# Runtime chain files (regenerated each run)
+chain/L4_script.py
+chain/L4_execution_log.md
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Blender temp files
+*.blend1
+*.blend2
+
+# Lock files
+.~lock.*
