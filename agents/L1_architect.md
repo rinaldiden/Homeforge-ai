@@ -86,10 +86,23 @@ Per ciascuna:
 - Le texture procedurali (Voronoi DISTANCE_TO_EDGE) producono risultati piatti e non fotorealistici
 - Per ottenere fotorealismo servono: texture PBR + bump chain a 2 livelli + normal map forte
 
+### Copertura in piode
+- Le piode sono lastre di pietra grigio scuro, spessore ~4.5cm
+- Texture consigliata: `patterned_slate_tiles` da Poly Haven (CC0)
+- Angolo falda: 35° (ottimale per lat. 46°N e carico neve)
+- Struttura: travi puntoni (22×26cm ogni 50cm) + tavolato + piode
+- Fare riferimento a `chain/materials/roof_piode.md` per parametri provati
+
+### Lattoneria in rame
+- Rame BRUNITO (marrone scuro metallico), NON verde-rame ossidato
+- Elementi: grondaia semicircolare, pluviale, scossalina colmo, bordo gronda
+- In Blender il rame verde riflette il cielo e appare turchese → usare toni bruni
+
 ### Decisioni materiche da specificare per L2/L3
 - Per ogni muro: indicare se è sasso di fiume, pietra locale, intonaco
 - Per il sasso: specificare dimensione sassi (8-30cm), colore (grigi misti), malta (grigio chiara 1-2cm)
-- Fare SEMPRE riferimento a `chain/materials/stone_wall.md` per parametri provati
+- Per il tetto: indicare tipo copertura (piode/altro), lattoneria (rame/altro)
+- Fare SEMPRE riferimento a `chain/materials/stone_wall.md` e `chain/materials/roof_piode.md`
 
 ## Anti-Pattern
 - NON inventare dimensioni: usa SOLO quelle dalla knowledge base

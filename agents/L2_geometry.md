@@ -92,10 +92,17 @@ Traduci le decisioni architettoniche di L1 in coordinate 3D precise. Ogni elemen
 - La profondità/rilievo dei sassi viene interamente dal materiale (bump chain), NON dalla geometria
 - Per un muro 3m x 2m x 0.45m: `scale = (3.0, 0.45, 2.0)`, `location.z = altezza/2`
 
+### Geometria tetto
+- Angolo falda: 35° (`math.radians(35)`)
+- Travi puntoni: sezione 22×26cm, spaziatura 50cm
+- Struttura stratificata dal basso: dormiente → travi → tavolato (2.5cm) → piode (4.5cm)
+- Sporto gronda: 45cm
+- Lattoneria: grondaia semicircolare R=10cm, pluviale R=5.5cm, scossalina colmo 25cm
+
 ### Texture mapping
 - Specificare che i muri usano coordinate `Generated` (NON `Object`) per evitare stretching
 - La proiezione `BOX` (blend 0.3) è obbligatoria per box che hanno facce visibili su più assi
-- Scala mapping: (1.5, 1.5, 1.5) per adattare texture quadrate a muri rettangolari
+- Scala mapping: (1.5, 1.5, 1.5) per muri, (3.0, 3.0, 3.0) per piode, (3.0, 0.8, 3.0) per travi
 
 ## Anti-Pattern
 - NON usare coordinate relative — tutto in assoluto dal sistema di riferimento

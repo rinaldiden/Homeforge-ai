@@ -202,11 +202,29 @@ except:
 ```
 
 ### Texture disponibili (già scaricate)
+
+**Muro pietra (rock_wall_08):**
 - `chain/materials/textures/rock_wall_08_diff_2k.jpg` — diffuse/color (sRGB)
 - `chain/materials/textures/rock_wall_08_nor_gl_2k.jpg` — normal map OpenGL (Non-Color)
 - `chain/materials/textures/rock_wall_08_rough_2k.jpg` — roughness (Non-Color)
 - `chain/materials/textures/rock_wall_08_disp_2k.png` — displacement (Non-Color)
 - Parametri completi: `chain/materials/stone_wall.md`
+
+**Piode tetto (patterned_slate_tiles):**
+- `chain/materials/textures/patterned_slate_tiles_diff_2k.jpg` — diffuse (sRGB)
+- `chain/materials/textures/patterned_slate_tiles_nor_gl_2k.jpg` — normal (Non-Color)
+- `chain/materials/textures/patterned_slate_tiles_rough_2k.jpg` — roughness (Non-Color)
+- `chain/materials/textures/patterned_slate_tiles_disp_2k.png` — displacement (Non-Color)
+
+**Legno travi (weathered_brown_planks):**
+- `chain/materials/textures/weathered_brown_planks_diff_2k.jpg` — diffuse (sRGB)
+- `chain/materials/textures/weathered_brown_planks_nor_gl_2k.jpg` — normal (Non-Color)
+- `chain/materials/textures/weathered_brown_planks_rough_2k.jpg` — roughness (Non-Color)
+- `chain/materials/textures/weathered_brown_planks_disp_2k.png` — displacement (Non-Color)
+
+**Rame brunito:** procedurale (no texture esterne)
+
+- Parametri tetto completi: `chain/materials/roof_piode.md`
 
 ## Lezioni dal Training (muro in pietra — 5 iterazioni)
 
@@ -220,6 +238,16 @@ except:
 | 3 | TexCoord Object su box → stretching | Usare `Generated` coords |
 | 4 | broken_wall texture → pietre piatte | Usare `rock_wall_08` per sassi fiume |
 | 5 | Risultato fotorealistico | Parametri finali in stone_wall.md |
+
+**Training tetto (6 iterazioni):**
+
+| Iterazione | Problema | Soluzione |
+|------------|----------|-----------|
+| 1 | slab_tiles = crazy paving | Usare `patterned_slate_tiles` per piode |
+| 2 | Travi troppo piccole, texture piode enorme | Sezione 22×26cm, scala texture 3.0 |
+| 3 | Rame verde turchese brillante | Colori più scuri nel ramp (parziale) |
+| 4-5 | Rame ancora verde anche con colori scurissimi | AgX + metallic alto amplifica riflessi cielo |
+| 6 | Rame brunito (SOLUZIONE) | Toni bruni, metallic 0.95, NO verde-rame |
 
 ## Anti-Pattern
 - NON generare script parziali — deve essere COMPLETO e autonomo

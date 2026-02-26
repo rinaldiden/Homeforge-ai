@@ -99,6 +99,37 @@ TexCoord (Generated) → Mapping (Scale 1.5, 1.5, 1.5)
 - Normal Map strength 2.0 per profondità visibile dei sassi
 - Bump chain: displacement → Bump (0.8) → noise micro → Bump (0.05) per rugosità stratificata
 
+### Piode (PBR — patterned_slate_tiles)
+**Riferimento:** `chain/materials/roof_piode.md`
+```
+TexCoord (Generated) → Mapping (Scale 3,3,3 — Rot Z 90°)
+    ├── Image Texture (Diffuse, BOX 0.3, sRGB) → Hue/Sat (Sat 0.55, Val 0.70) → Base Color
+    ├── Image Texture (Roughness, BOX 0.3, Non-Color) → Roughness
+    ├── Image Texture (Normal, BOX 0.3, Non-Color) → Normal Map (Str 2.5) ─┐
+    ├── Image Texture (Displacement, BOX 0.3, Non-Color) → Bump (Str 1.0, Dist 0.05) ← Normal
+    └── Noise (Scale 100, Detail 12) → Bump (Str 0.04, Dist 0.001) → Normal output
+```
+
+### Legno travi (PBR — weathered_brown_planks)
+```
+TexCoord (Generated) → Mapping (Scale 3.0, 0.8, 3.0)
+    ├── Image Texture (Diffuse, BOX 0.3) → Hue/Sat (Sat 0.65, Val 0.55) → Base Color
+    ├── Image Texture (Roughness, BOX 0.3) → Roughness
+    ├── Image Texture (Normal, BOX 0.3) → Normal Map (Str 2.0) ─┐
+    └── Image Texture (Displacement, BOX 0.3) → Bump (Str 0.7, Dist 0.015) ← Normal → output
+```
+
+### Rame brunito (procedurale)
+**IMPORTANTE:** NON usare verde-rame. Usare toni bruni (marrone/arancio scuro).
+```
+TexCoord (Generated) → Mapping (Scale 10,10,10)
+    └── Noise (Scale 6, Detail 10)
+        ├── ColorRamp (rame caldo→bruno→scuro) → Base Color
+        ├── ColorRamp (lucido→opaco) → Roughness
+        └── Noise micro (Scale 100) → Bump (Str 0.15, Dist 0.003) → Normal
+Metallic: 0.95 (fisso), Roughness base: 0.35
+```
+
 ### Pietra (FALLBACK: procedurale — risultato inferiore)
 **NOTA:** Il procedurale puro NON raggiunge il fotorealismo. Usare solo se texture non disponibili.
 ```
@@ -141,6 +172,13 @@ Mapping(1,4,1) → Voronoi(DIST_EDGE, 25) → Math(LT 0.04) ─── MixRGB(fug
 6. **`mat.cycles.displacement_method`** → errore. Usare `mat.displacement_method`
 7. **`feature_set = 'EXPERIMENTAL'`** → rimosso in Blender 5.0
 8. **`AgX - Medium Contrast`** → rinominato in `AgX - Base Contrast`
+
+### Lezioni dal Training tetto (6 iterazioni)
+9. **`slab_tiles`** → pietre irregolari tipo crazy paving. Per piode usare `patterned_slate_tiles`
+10. **Rame con patina verde** → in AgX riflette cielo, appare turchese. Usare rame BRUNITO
+11. **Metallic variabile per rame ossidato** → non risolve il verde. Usare metallic fisso 0.95 + toni bruni
+12. **Mapping piode** → rotazione Z 90° necessaria per allineare le lastre sulla falda
+13. **Mapping legno travi** → scala Y bassa (0.8) per allungare venature lungo la trave
 
 ## Anti-Pattern
 - NON usare `scene.node_tree` — è rimosso in Blender 5.0
