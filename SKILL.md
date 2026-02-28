@@ -33,7 +33,8 @@ description: |
 | L1 | Architetto Render | agents/L1_architect.md | Richiesta → Decisioni |
 | L2 | Ingegnere Geometrico | agents/L2_geometry.md | Decisioni → Coordinate 3D |
 | L3 | Traduttore Blender | agents/L3_translator.md | Coordinate → Operazioni bpy |
-| L4 | Esecutore | agents/L4_executor.md | Operazioni → Script Python → Render |
+| L4 | Esecutore | agents/L4_executor.md | Operazioni → Script Python → Render GREZZO + depth + canny |
+| L5 | Flux Renderer | agents/L5_flux_renderer.md | Render grezzo + depth + canny + prompt → Immagine FOTOREALISTICA |
 
 ## Knowledge Base (leggere SEMPRE prima di tutto)
 | File | Contenuto |
@@ -51,7 +52,8 @@ homeforge-ai/
 │   ├── L1_architect.md
 │   ├── L2_geometry.md
 │   ├── L3_translator.md
-│   └── L4_executor.md
+│   ├── L4_executor.md
+│   └── L5_flux_renderer.md
 ├── references/                ← Definizioni agenti di progetto
 │   ├── 01-strutturista.md
 │   ├── 02-energy.md
@@ -71,7 +73,8 @@ homeforge-ai/
 │   ├── L2_geometry_spec.md
 │   ├── L3_blender_ops.md
 │   ├── L4_script.py
-│   └── L4_execution_log.md
+│   ├── L4_execution_log.md
+│   └── L5_execution_log.md
 ├── output/                    ← Render finali
 │   └── *.png
 └── deliverables/              ← Documenti di progetto generati
@@ -201,7 +204,16 @@ Quando 2+ agenti danno indicazioni contrastanti:
 - Documenta ogni conflitto risolto nel progetto generale
 
 ### Fase 4 — Render e Fotoinserimenti
-**Azione:** Esegui la pipeline render L1→L2→L3→L4
+**Azione:** Esegui la pipeline render L1→L2→L3→L4→L5
+
+#### Pipeline Render Ibrida (Blender geometria + Flux fotorealismo)
+La pipeline ora usa un approccio ibrido:
+- **L1→L4**: Blender genera geometria corretta con materiali base grigi + depth map + canny map
+- **L5**: ComfyUI/Flux trasforma il render grezzo in immagine fotorealistica
+
+Moduli Python:
+- `comfy_flux_client.py` — Client per ComfyUI API (avvia server, costruisce workflow, scarica risultato)
+- `prompt_engineer_flux.py` — Trasforma decisioni L1 in prompt Flux ottimizzato per archviz
 
 Produce:
 - `output/*.png` (render 3D)
@@ -446,7 +458,7 @@ Documento master che integra tutti gli agenti:
 | "fai la Legge 10" | Energy + Strutturista (carichi) | 2B |
 | "fai la pianta" | Architetto | 2C |
 | "prepara la paesaggistica" | Commissione + Render | 2D + 4 |
-| "genera un render" | Pipeline Render L1→L4 | 4 |
+| "genera un render" | Pipeline Render L1→L5 | 4 |
 | "verifica la pratica" | Geometra | 1 |
 | "aggiorna i calcoli" | Strutturista | 2A |
 | "fai il computo" | Tutti (serve progetto completo) | 5 |
@@ -458,7 +470,8 @@ Documento master che integra tutti gli agenti:
    - Cambio architettonico → riparti da L1
    - Cambio coordinate → riparti da L2
    - Cambio operazioni Blender → riparti da L3
-   - Cambio script/render → riparti da L4
+   - Cambio script/render Blender → riparti da L4
+   - Cambio prompt/stile fotorealistico → riparti da L5 (solo Flux, veloce)
 3. Aggiorna SOLO i livelli necessari e successivi
 
 ---
