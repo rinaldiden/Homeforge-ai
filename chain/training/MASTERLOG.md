@@ -92,5 +92,44 @@
 
 ---
 
-## Elemento 3-7: SOSPESI
-Training interrotto — focus su muro Misto Alpi da riferimento pietraeco.it
+## Elemento 3: Struttura Tetto in Legno ✅
+(Completato in sessione precedente, 3 iterazioni)
+
+---
+
+## Archviz Workflow Completo ✅
+
+### Data: 2026-02-28
+### Obiettivo: Casa moderna completa con workflow archviz professionale
+### Risultato: 5 iterazioni, da CG a semi-fotorealistico
+
+### Workflow eseguito:
+1. **Download textures**: 4 set PBR (concrete_wall_008, wood_planks_grey, grass_path_2, concrete_floor_02) + HDRI (kloofendal_48d_partly_cloudy)
+2. **Geometria**: Casa moderna 12x8m, flat roof con overhang 1m, grande vetrata frontale, cladding legno su est
+3. **Materiali PBR**: concrete con weathering gradient, wood cladding, glass (IOR 1.52), paving
+4. **Vegetazione procedurale**: Multi-lobe trees (5-7 icosphere), bushes con displacement clouds, 4 shade di verde
+5. **HDRI + Sun**: Golden hour (elevation 35°, warm color), fill light cool, HDRI strength 1.0
+6. **Camera**: 30mm, f/5.6, eye-level 3/4 view
+7. **Render**: Cycles CPU 512 samples, AgX Medium Contrast, 1920x1080
+8. **Post-processing PIL**: Warm grade, contrast +8%, saturation +10%, vignette, sharpening
+
+### Lezioni nuove scoperte:
+1. **grass_path_2 = MARRONE** → Serve overlay verde (RGB 0.12, 0.28, 0.08) al 65% + HSV sat 1.3
+2. **Multi-lobe trees** >> singola sfera → 5-7 icosphere sovrapposte con noise displacement
+3. **Micro noise bump** (scale 50-60, str 0.04) su ogni materiale PBR → rompe la perfezione CG
+4. **Weathering gradient** via SeparateXYZ.Z → ColorRamp → Multiply = base scura + top sporco
+5. **Window recess** (10cm) = profondità essenziale
+6. **Soffit** sotto l'overhang = dettaglio cruciale per credibilità
+7. **PIL post-processing** come alternativa a compositor Blender 5.0 (scene.node_tree rimosso)
+8. **Fill light cool** dal lato opposto al sole → recupera dettagli nelle ombre
+9. **Cono rastremato** per tronchi alberi >> cilindro dritto
+10. **Subsurface Color** rimosso in Blender 5.0 → usare solo Subsurface Weight
+
+### File prodotti:
+- `chain/training/archviz_workflow/render_iter[1-5].py` — 5 script iterativi
+- `chain/training/archviz_workflow/postprocess.py` — post-processing PIL
+- `chain/training/archviz_workflow/iterazione_[1-5].png` — render iterativi
+- `chain/training/archviz_workflow/final_render.png` — render finale post-processato
+- `chain/training/archviz_workflow/LEARNED.md` — lezioni apprese
+- `chain/training/archviz_workflow/materials_used.md` — materiali usati
+- `chain/training/archviz_workflow/render_settings.md` — impostazioni render
